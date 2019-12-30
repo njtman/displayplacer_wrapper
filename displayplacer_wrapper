@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+# Wrapper script to save and apply macOS monitor configuration using the displayplacer utility
+# https://github.com/jakehilborn/displayplacer
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+function print_help {
+    cat <<EOF
+
+-----------------HELP-----------------
+
+Usage
+$ ./displayplacer_wrapper <action>
+
+Valid actions are
+${VALID_ACTIONS[*]}
+
+EOF
+}
+
+function error {
+    echo "Error: ${1}"
+    print_help
+    exit 1
+}
+
+function setup {
+    command -v displayplacer > /dev/null || \
+        ( echo 'displayplacer not found, installing via brew...' && \
+          brew tap jakehilborn/jakehilborn && brew install displayplacer )
+}
+
+function check_args {
+    [[ -n "${1:-}" ]] || error 'Provide an action'
+    [[ "${VALID_ACTIONS[*]}" =~ ${1} ]] || error 'Provide a valid action'
+}
+
+function save {
+    local config
+    config=$(displayplacer list | tail -1)
+    config="${config/displayplacer }"
+    echo "${config}" > "${CONFIG_FILE}"
+    cat <<EOF
+The following screen config was saved to ${CONFIG_FILE}
+
+${config}
+EOF
+}
+
+function apply {
+    [[ -f "${CONFIG_FILE}" ]] || error "${CONFIG_FILE} does not exist.
+Run '$ ./screen_beehave save' to persist the current display config to this file."
+    echo 'applying config...'
+    monitor_config=$(tr '\n' ' ' < "${CONFIG_FILE}" | sed 's/"//g')
+    displayplacer "${monitor_config}"
+    echo 'config applied successfully!'
+}
+
+VALID_ACTIONS=(
+save
+apply
+help
+)
+
+CONFIG_FILE="${HOME}/.displayplacer.cfg"
+setup
+check_args "$@"
+action="${1}"
+if [ "${action}" = 'save' ]; then
+    save
+elif [ "${action}" = 'apply' ];then
+    apply
+elif [ "${action}" = 'help' ];then
+    print_help
+fi
