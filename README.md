@@ -51,7 +51,7 @@ This Quick Action must be run at least once before running `Fix displays`.
 
 This Quick Action will set the display arrangement using the previously persisted values from running the `Save display arragement`.
 
-It is normal for the display to go blank for a couple of sections while setting the display arrangement.
+It is normal for the display to go blank for a couple of seconds while setting the display arrangement.
 
 ### CLI
 
