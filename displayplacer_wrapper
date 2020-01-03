@@ -40,7 +40,7 @@ function check_args {
 
 function save {
     local config
-    config=$(displayplacer list | tail -1)
+    config=$(displayplacer list | tail -1 | sed 's/" "/\'$'\n/g' | sed 's/"//g')
     config="${config/displayplacer }"
     echo "${config}" > "${CONFIG_FILE}"
     cat <<EOF
