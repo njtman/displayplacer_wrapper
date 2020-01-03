@@ -54,8 +54,13 @@ function apply {
     [[ -f "${CONFIG_FILE}" ]] || error "${CONFIG_FILE} does not exist.
 Run '$ ./screen_beehave save' to persist the current display config to this file."
     echo 'applying config...'
-    monitor_config=$(tr '\n' ' ' < "${CONFIG_FILE}" | sed 's/"//g')
-    displayplacer "${monitor_config}"
+
+    monitor_config=()
+    while IFS= read -r line; do
+       monitor_config+=("$line")
+    done <"${CONFIG_FILE}"
+
+    displayplacer "${monitor_config[@]}"
     echo 'config applied successfully!'
 }
 
