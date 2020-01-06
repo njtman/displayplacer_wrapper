@@ -60,7 +60,7 @@
 				<dict>
 					<key>COMMAND_STRING</key>
 					<string>export PATH=/usr/local/bin:$PATH
-displayplacer_wrapper apply</string>
+displayplacer_wrapper apply &gt; /tmp/fix_displays_quick_action.log 2&gt;&amp;1</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>
